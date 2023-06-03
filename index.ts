@@ -1,16 +1,31 @@
-import { generateFixture } from "./fixture";
-import 'reflect-metadata';
+import { generateFixture, FixtureParam, FixtureClass } from "./fixture";
 
+@FixtureClass()
+class Box{
+  size: string;
+
+  constructor(
+    @FixtureParam(String)size: string,
+  )
+  {
+    this.size = size
+  }
+}
+
+@FixtureClass()
 class Person {
-  @Reflect.metadata('design:type', String)
   name: string;
-
-  @Reflect.metadata('design:type', Number)
   age: number;
+  m_box: Box;
 
-  constructor(name: string, age: number) {
+  constructor(
+    @FixtureParam(String) name: string, 
+    @FixtureParam(Number) age: number,
+    @FixtureParam(Box) box: Box
+  ) {
     this.name = name;
     this.age = age;
+    this.m_box = box;
   }
 }
 

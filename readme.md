@@ -1,3 +1,6 @@
+## Edge cases
+    1. Right now the implmentation doesnot work if the member is a generic class
+
 ## Ideas for Future
     1. No one would want to add these decoarators by themselves in every class. And doing this would only pollute your codebase.
     2. An Idea is to inject decorators or alter the TypeScript code at transpile-time.

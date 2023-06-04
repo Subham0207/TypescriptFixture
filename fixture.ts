@@ -3,15 +3,10 @@ import 'reflect-metadata';
 
 // Recursive fixture generation function
 export function generateFixture<T>(cls: new (...args: any[]) => T): T {
-  const isFixtureClass = Reflect.getMetadata('fixture:isFixtureClass', cls);
-  if (!isFixtureClass) {
-    throw new Error(`Class ${cls.name} is not a fixture class. Did you forget to add the @FixtureClass decorator?`);
-  }
-
-  const paramData: any[] = Reflect.getMetadata('fixture:params', cls.prototype.constructor) || [];
+  const paramData: any[] = Reflect.getMetadata('fixture:params', cls.prototype.constructor);
   console.log(`Metadata for ${cls.name}:`, paramData);
 
-  const params = new Array(Math.max(...paramData.map(p => p.index)) + 1);
+  const params = new Array(paramData.length);
   for (const { index, type } of paramData) {
     if (isPrimitiveType(type)) {
       params[index] = generateRandomValue(type);
@@ -23,18 +18,14 @@ export function generateFixture<T>(cls: new (...args: any[]) => T): T {
   return new cls(...params);
 }
 
+// This meta data gets created for each class definition that is using FixtureParam decorator
 export function FixtureParam(type: Function): ParameterDecorator {
   return (target, _, parameterIndex) => {
     const existingParams: any[] = Reflect.getMetadata('fixture:params', target) || [];
+    // console.log(`Before pushing ${type.name} to Existing params for ${target.toString().match(/class\s+(\w+)/)?.[1]}: `,existingParams);
     existingParams.push({ index: parameterIndex, type });
     Reflect.defineMetadata('fixture:params', existingParams, target);
-  };
-}
-
-
-export function FixtureClass(): ClassDecorator {
-  return (target) => {
-    Reflect.defineMetadata('fixture:isFixtureClass', true, target);
+    // console.log(`After pushing ${type.name} to Existing params for ${target.toString().match(/class\s+(\w+)/)?.[1]}: `,existingParams);
   };
 }
 
@@ -52,7 +43,5 @@ function generateRandomValue(memberType: any): any {
     return faker.datatype.boolean();
   } else if (memberType === Date) {
     return faker.date.recent();
-  } else {
-    return generateFixture(memberType);
   }
 }

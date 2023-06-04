@@ -1,6 +1,5 @@
-import { generateFixture, FixtureParam, FixtureClass } from "./fixture";
+import { generateFixture, FixtureParam } from "./fixture";
 
-@FixtureClass()
 class Box{
   size: string;
 
@@ -12,7 +11,6 @@ class Box{
   }
 }
 
-@FixtureClass()
 class Person {
   name: string;
   age: number;
@@ -21,7 +19,7 @@ class Person {
   constructor(
     @FixtureParam(String) name: string, 
     @FixtureParam(Number) age: number,
-    @FixtureParam(Box) box: Box
+    @FixtureParam(Box) box: Box,
   ) {
     this.name = name;
     this.age = age;
@@ -29,6 +27,9 @@ class Person {
   }
 }
 
+//Accessing the FixtureParam metadata
+// console.log("metadata for Box: ",Reflect.getMetadata('fixture:params', Box.prototype.constructor))
+// console.log("metadata for Person: ",Reflect.getMetadata('fixture:params', Person.prototype.constructor))
 
 const obj = generateFixture(Person);
 console.log(obj);
